@@ -28,6 +28,10 @@ class S3Bucket(object):
         k.set_contents_from_filename(srcfile)
 
 
+def usage(progname):
+    print progname + ' <srcfile> <bucket> [dstfile]'
+    
+        
 def main(argv):
     srcfile = ""
     dstfile = ""
@@ -36,18 +40,15 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv[1:],"h")
     except getopt.GetoptError:
-        print 'Option error'
-        print argv[0] + ' <srcfile> <bucket> [dstfile]'
+        usage(argv[0])
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'Usage:'
-            print argv[0] + ' <srcfile> <bucket> [dstfile]'
+            usage(argv[0])
             sys.exit()
 
     if len(args) < 2:
-        print 'Arg error'
-        print argv[0] + ' <srcfile> <bucket> [dstfile]'
+        usage(argv[0])
         sys.exit(2)
 
     srcfile = args[0]
@@ -57,11 +58,11 @@ def main(argv):
     else:
         dstfile = args[2]
 
-    print 'Uploading ' + srcfile + ' to ' + bucket + ':' + dstfile
-        
     s3conn = S3Connection()
     bucket_object = s3conn.get_bucket(bucket)
     bucket_object.addfile(srcfile, dstfile)
 
+    print 'Uploaded ' + srcfile + ' to ' + bucket + ':' + dstfile
+        
 if __name__ == "__main__":
     main(sys.argv)
